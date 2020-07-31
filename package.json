@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "node server.js",
-    "ts": "yarn tsc -w",
-    "less": "node node_module/less-watch-compiler/dist/less-watch-compiler.js src public style.less"
+    "dev": "cross-env NODE_ENV=development webpack-dev-server",
+    "build": "cross-env NODE_ENV=production webpack"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +14,8 @@
     "express": "^4.17.1",
     "less-watch-compiler": "^1.14.1",
     "typescript": "^3.6.3"
+  },
+  "devDependencies": {
+    "webpack-typescript-boilerplate": "^1.1.1"
   }
 }

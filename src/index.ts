@@ -11,7 +11,8 @@ import {
     SetStyle,
     If,
 } from './attributes/index';
-import { map, compose } from './utils';
+import { map, compose } from './lib/utils';
+import { createStore } from './lib/Publisher';
 
 const root = document.querySelector('#root');
 
@@ -37,7 +38,7 @@ root.appendChild(
             ),
         ),
 
-        If(map(num)(num => num % 2 !== 0))
+        If(map<number>(num)(num => num % 2 !== 0))
             (() => View(
                 Title(String(num)),
                 Button('hi'),
