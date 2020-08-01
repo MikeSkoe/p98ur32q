@@ -1,19 +1,20 @@
 import { Publisher } from '../lib/Publisher';
-import On from '../attributes/On';
+import { View } from '../lib/View';
 
-const Input = (pub: Publisher<string>) => {
-    let input = document.createElement('input');
+class Input extends View<HTMLInputElement>{
+    node = document.createElement('input');
 
-    pub.sub(value => input.value = value);
+    constructor(pub: Publisher<string>) {
+        super();
 
-    return On(
-        'input',
-        (event: InputEvent) => {
-            pub.set(
-                () => (<HTMLInputElement>event.target).value,
-            );
-        },
-    )(input);
-};
+        this.unsubs.push(
+            pub.sub(value => this.node.value = value)
+        );
+        this.node.oninput = (event: InputEvent) => {
+            pub.set(() => (<HTMLInputElement>event.target).value);
+        }
+    }
+
+}
 
 export default Input;

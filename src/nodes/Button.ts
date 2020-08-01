@@ -1,13 +1,20 @@
-const Button = (title: string, onClick?: HTMLButtonElement['onclick']) => {
-    const button = document.createElement('button');
+import { View } from '../lib/View';
 
-    if (onClick) {
-        button.onclick = onClick;
+class Button extends View<HTMLButtonElement> {
+    node = document.createElement('button');
+
+    constructor (title: string, onClick?: HTMLButtonElement['onclick']) {
+        super();
+        this.node.innerText = title;
+
+        if (onClick) {
+            this.node.onclick = onClick;
+        }
     }
 
-    button.innerText = title;
-
-    return button;
+    remove = () => {
+        this.node.remove();
+    }
 }
 
 export default Button;

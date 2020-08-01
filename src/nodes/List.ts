@@ -1,85 +1,84 @@
 import { Publisher } from '../lib/Publisher';
 import { WithId, isIn, notIn } from '../lib/utils';
+import { View } from '../lib/View';
 
-const Removable = (
-    onRemove: () => void,
-) => (
-    node: HTMLElement,
-) => {
-    node.addEventListener('remove', onRemove);
-
-    return node;
-}
-
-const setKey = (
+const setKey = <T extends HTMLElement>(
     key: string,
 ) => (
-    node: HTMLElement,
+    node: View<T>,
 ) => {
-    node.dataset['key'] = key;
+    node.node.dataset['key'] = key;
 
     return node;
 }
 
-const List = <T extends WithId>(
-    data: Publisher<T[]>,
-    render: (item: T) => HTMLElement,
-    keyExtractor: (item: T) => string = item => item.id,
-) => {
-    console.trace();
-    const holder = document.createElement('div');
-    holder.dispatchEvent(new Event('remove'));
-    let prevArr: T[] = [];
+class List<T extends WithId> extends View<HTMLDivElement> {
+    node = document.createElement('div');
 
-    data.sub(newArr => {
-        const addedVals = newArr.filter(notIn(prevArr));
-        const removedVals = prevArr.filter(notIn(newArr));
-        const oldWithoutRemoved = newArr.filter(notIn(removedVals));
-        const newWithoutAdded = newArr.filter(notIn(addedVals));
+    private prevArr: T[] = [];
 
-        const children = [...holder.childNodes.values()];
+    constructor(
+        data: Publisher<T[]>,
+        render: (item: T) => View<HTMLElement>,
+    ) {
+        super();
 
-        // remove deleted items
-        const isInRemoved = isIn(removedVals);
-        children
-            .filter((child: HTMLElement) => isInRemoved({id: child.dataset['key']}))
-            .forEach(child => child.remove());
+        this.unsubs.push(
+            data.sub(newArr => {
+                const addedVals = newArr.filter(notIn(this.prevArr));
+                const removedVals = this.prevArr.filter(notIn(newArr));
+                const oldWithoutRemoved = newArr.filter(notIn(removedVals));
+                const newWithoutAdded = newArr.filter(notIn(addedVals));
 
-        // update moved
-		newWithoutAdded.forEach(
-			(newVal, index) => {
-				if (
-					newVal.id !== oldWithoutRemoved[index].id
-				) {
-					const newItem = setKey(newVal.id)(render(newVal));
-                    const oldItem = children.find((child: HTMLElement) => newVal.id === child.dataset['key']);
-                    holder.replaceChild(newItem, oldItem);
-				}
-			}
-        );
+                const children = [...this.node.childNodes.values()];
 
-        // add new
-		addedVals.forEach(
-			newVal => {
-				const newItem = setKey(newVal.id)(render(newVal));
-                const indexOfAfter = newArr.findIndex(item => item.id === newVal.id);
-                const nextElement = children[indexOfAfter];
-                if (nextElement) {
-                    nextElement.before(newItem);
-                } else {
-                    if (indexOfAfter === 0) {
-                        holder.prepend(newItem);
-                    } else {
-                        holder.appendChild(newItem);
+                // remove deleted items
+                const isInRemoved = isIn(removedVals);
+                children
+                    .filter((child: HTMLElement) => isInRemoved({id: child.dataset['key']}))
+                    .forEach(child => child.remove());
+
+                // update moved
+                newWithoutAdded.forEach(
+                    (newVal, index) => {
+                        if (
+                            newVal.id !== oldWithoutRemoved[index].id
+                        ) {
+                            const newItem = setKey(newVal.id)(render(newVal));
+                            const oldItem = children.find((child: HTMLElement) => newVal.id === child.dataset['key']);
+                            this.node.replaceChild(newItem.node, oldItem);
+                        }
                     }
-                }
-			}
-		)
+                );
 
-        prevArr = newArr;
-    })
+                // add new
+                addedVals.forEach(
+                    newVal => {
+                        const newItem = setKey(newVal.id)(render(newVal));
+                        const indexOfAfter = newArr.findIndex(item => item.id === newVal.id);
+                        const nextElement = children[indexOfAfter];
+                        if (nextElement) {
+                            nextElement.before(newItem.node);
+                        } else {
+                            if (indexOfAfter === 0) {
+                                this.node.prepend(newItem.node);
+                            } else {
+                                this.node.appendChild(newItem.node);
+                            }
+                        }
+                    }
+                )
 
-    return holder;
-};
+                this.prevArr = newArr;
+            })
+        )
+    }
+
+    remove = () => {
+        super.remove();
+
+        this.node.childNodes.forEach(child => child.remove());
+    }
+}
 
 export default List;

@@ -1,13 +1,9 @@
 import {
-    Title,
-    View,
+    Div,
     String,
     List,
     Input,
 } from './nodes/index';
-import {
-    On,
-} from './attributes/index';
 import { map } from './lib/utils';
 import { createStore, Publisher } from './lib/Publisher';
 
@@ -23,39 +19,36 @@ const $tasks = createStore<Task[]>([
     {id: '1', title: 'hello'}
 ]);
 const addTask = (task: Task) => $tasks.set(arr => arr.concat(task));
-const changeInput = (text: string) => $input.set(() => text);
+const setInput = (text: string) => $input.set(() => text);
 const removeTask = (id: string) => $tasks.set(arr => arr.filter(item => item.id !== id));
 
-const MyInput = ($pub: Publisher<string>) =>
-    On('keydown',
-        e => {
-            if (e.key !== 'Enter') {
-                return 
-            }
-
-            addTask({
-                id: `${Math.random()}`,
-                title: $pub.get(),
-            })
-            changeInput('');
-        },
-    )
-        (Input($pub));
-
-const TaskView = (task: Task) =>
-    On('click',
-        () => removeTask(task.id),
-    )
-        (View(String(task.title)));
+const TaskView = (
+    task: Task,
+) => new Div(
+    new String(task.title)
+)
+    .on('click', () => removeTask(task.id))
+    .className('task');
 
 root.appendChild(
-    View(
-        Title(String(map($tasks)(arr => arr.length))),
-        Title(String($input)),
-        MyInput($input),
-        List(
+    new Div(
+        new Div(
+            new String(map($tasks)(arr => arr.length)),
+            new String($input),
+        ),
+        new Input($input)
+            .on('keydown', e => {
+                if (e.key === 'Enter') {
+                    addTask({
+                        id: `${Math.random()}`,
+                        title: (<HTMLInputElement>event.target).value,
+                    })
+                    setInput('');
+                }
+            }),
+        new List(
             $tasks,
             TaskView,
         ),
-    )
+    ).node
 );

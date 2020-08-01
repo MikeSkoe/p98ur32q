@@ -1,15 +1,18 @@
 import { Publisher } from '../lib/Publisher';
+import { View } from '../lib/View';
 
-const String = (str: Publisher<unknown> | string) => {
-    const text = document.createTextNode('');
+class String extends View<Text> {
+    node = document.createTextNode('');
 
-    if (typeof str === 'string') {
-        text.textContent = str;
-    } else {
-        str.sub(str => text.textContent = `${str}`);
+    constructor(str: Publisher<unknown> | string) {
+        super();
+
+        if (typeof str === 'string') {
+            this.node.textContent = str;
+        } else {
+            this.unsubs.push(str.sub(str => this.node.textContent = `${str}`));
+        }
     }
-
-    return text;
 }
 
 export default String;
