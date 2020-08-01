@@ -1,3 +1,5 @@
+import { Publisher } from '../lib/Publisher';
+
 const String = (str: Publisher<unknown> | string) => {
     const text = document.createTextNode('');
 

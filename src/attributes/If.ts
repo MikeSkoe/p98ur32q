@@ -1,3 +1,5 @@
+import { Publisher } from '../lib/Publisher';
+
 const If = (
     pub: Publisher<boolean>,
 ) => (

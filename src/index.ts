@@ -3,70 +3,59 @@ import {
     View,
     String,
     List,
-    Button,
     Input,
 } from './nodes/index';
 import {
     On,
-    SetStyle,
-    If,
 } from './attributes/index';
-import { map, compose } from './lib/utils';
-import { createStore } from './lib/Publisher';
+import { map } from './lib/utils';
+import { createStore, Publisher } from './lib/Publisher';
 
 const root = document.querySelector('#root');
 
-const num = createStore(0);
-const array = createStore([
-    {id: '11'},
-    {id: '22'},
-    {id: '33'},
+interface Task {
+    id: string;
+    title: string;
+}
+
+const $input = createStore('');
+const $tasks = createStore<Task[]>([
+    {id: '1', title: 'hello'}
 ]);
+const addTask = (task: Task) => $tasks.set(arr => arr.concat(task));
+const changeInput = (text: string) => $input.set(() => text);
+const removeTask = (id: string) => $tasks.set(arr => arr.filter(item => item.id !== id));
+
+const MyInput = ($pub: Publisher<string>) =>
+    On('keydown',
+        e => {
+            if (e.key !== 'Enter') {
+                return 
+            }
+
+            addTask({
+                id: `${Math.random()}`,
+                title: $pub.get(),
+            })
+            changeInput('');
+        },
+    )
+        (Input($pub));
+
+const TaskView = (task: Task) =>
+    On('click',
+        () => removeTask(task.id),
+    )
+        (View(String(task.title)));
 
 root.appendChild(
     View(
-        Title(String(num)),
-
+        Title(String(map($tasks)(arr => arr.length))),
+        Title(String($input)),
+        MyInput($input),
         List(
-            array,
-            (item =>
-                On(
-                    'click',
-                    () => array.set(arr => arr.filter(thing => thing.id !== item.id)),
-                )
-                    (View(String(item.id)))
-            ),
+            $tasks,
+            TaskView,
         ),
-
-        If(map<number>(num)(num => num % 2 !== 0))
-            (() => View(
-                Title(String(num)),
-                Button('hi'),
-            )),
-        
-        On(
-            'change',
-            (event: InputEvent) => {
-                const number = Number((<HTMLInputElement>event.target).value);
-
-                if (!isNaN(number)) {
-                    num.set(() => number);
-                }
-            },
-        )
-            (Input(map(num)(num => num.toString()))),
-
-        compose(
-            SetStyle(num, (style, val) => {style.marginLeft = `${val}px`}),
-            On('click', () => {
-                num.set(value => {
-                    console.log('add');
-                    array.set(arr => arr.concat({id: `${value + 1}`}));
-
-                    return value + 1;
-                })
-            }),
-        )
-            (Button('button')),
     )
 );

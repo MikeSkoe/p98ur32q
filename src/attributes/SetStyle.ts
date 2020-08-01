@@ -1,3 +1,5 @@
+import { Publisher } from '../lib/Publisher';
+
 const setStyle = <T>(
     pub: Publisher<T>,
     updateStyle: (style: CSSStyleDeclaration, val: T) => void,

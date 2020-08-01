@@ -1,3 +1,9 @@
+import { Publisher } from './Publisher';
+
+export interface WithId {
+    id: string;
+}
+
 export const map = <T>(pub: Publisher<T>) => <A>(mapFn: (val: T) => A): Publisher<A> => ({
     sub: callback => pub.sub(val => callback(mapFn(val))),
     // @ts-ignore
@@ -20,3 +26,6 @@ export const mem = <T, R>(fn: (args: T) => R) => {
         }
     }
 };
+
+export const isIn = (arr: WithId[]) => (item: WithId) => arr.some(i => i.id === item.id);
+export const notIn = (arr: WithId[]) => (item: WithId) => !arr.some(i => i.id === item.id);

@@ -1,6 +1,7 @@
 export interface Publisher<T> {
     sub: (callback: (val: T) => void) => () => void;
     set: (update: (prev: T) => T) => void;
+    get: () => T;
 }
 
 export const createStore = <T>(
@@ -27,8 +28,11 @@ export const createStore = <T>(
         }
     };
 
+    const get:Publisher<T>['get'] = () => state;
+
     return {
         sub,
         set,
+        get,
     }
 };
