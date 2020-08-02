@@ -1,5 +1,5 @@
 import { addTask, setInput, $input } from '../state';
-import Input from '../nodes/Input';
+import Input from '../../nodes/Input';
 
 const TaskInput = () => {
     const onEnter: HTMLInputElement['onkeydown'] = e => {

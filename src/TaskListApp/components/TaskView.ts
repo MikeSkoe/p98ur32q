@@ -1,8 +1,8 @@
-import { createStore } from "../lib/Publisher";
+import { createStore } from "../../lib/Publisher";
 import {
     Div,
     String,
-} from '../nodes/index';
+} from '../../nodes/index';
 import { Task } from "../types/task";
 import { removeTask } from "../state";
 

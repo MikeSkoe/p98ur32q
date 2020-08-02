@@ -1,4 +1,4 @@
-import { createStore } from "./lib/Publisher";
+import { createStore } from "../lib/Publisher";
 import { Task } from "./types/task";
 
 // state

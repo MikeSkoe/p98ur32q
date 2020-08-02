@@ -1,7 +1,7 @@
 import { Publisher } from './Publisher';
 
 export interface WithId {
-    id: string;
+    id: string | number;
 }
 
 export const map = <T, A>(mapFn: (val: T) => A) => (pub: Publisher<T>): Publisher<A> => {

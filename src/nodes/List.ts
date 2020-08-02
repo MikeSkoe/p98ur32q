@@ -7,6 +7,7 @@ const setKey = <T extends HTMLElement>(
 ) => (
     node: View<T>,
 ) => {
+    console.log(node);
     node.node.dataset['key'] = key;
 
     return node;
@@ -44,7 +45,7 @@ class List<T extends WithId> extends View<HTMLDivElement> {
                         if (
                             newVal.id !== oldWithoutRemoved[index].id
                         ) {
-                            const newItem = setKey(newVal.id)(render(newVal));
+                            const newItem = setKey(`${newVal.id}`)(render(newVal));
                             const oldItem = children.find((child: HTMLElement) => newVal.id === child.dataset['key']);
                             this.node.replaceChild(newItem.node, oldItem);
                         }
@@ -54,7 +55,7 @@ class List<T extends WithId> extends View<HTMLDivElement> {
                 // add new
                 addedVals.forEach(
                     newVal => {
-                        const newItem = setKey(newVal.id)(render(newVal));
+                        const newItem = setKey(`${newVal.id}`)(render(newVal));
                         const indexOfAfter = newArr.findIndex(item => item.id === newVal.id);
                         const nextElement = children[indexOfAfter];
                         if (nextElement) {

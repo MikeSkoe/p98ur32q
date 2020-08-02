@@ -6,7 +6,6 @@ class PlaceHolder extends View<Text> {
 }
 
 class If extends View<HTMLDivElement> {
-    currentChild: View<HTMLElement | Text>;
     node = document.createElement('div');
 
     constructor(
@@ -15,18 +14,16 @@ class If extends View<HTMLDivElement> {
         another?: () => View<HTMLElement | Text>,
     ) {
         super();
-        this.currentChild = element();
 
         this.unsubs.push(pub.sub(val => {
-            this.currentChild.remove();
+            const newNode = 
+                val
+                    ? element()
+                : another
+                    ? another()
+                    : new PlaceHolder();
 
-            if (val) {
-                this.currentChild = element();
-            } else {
-                this.currentChild = another ? another() : new PlaceHolder();
-            }
-
-            this.node.appendChild(this.currentChild.node)
+            this.node.replaceWith(newNode.node);
         }));
     }
 }
