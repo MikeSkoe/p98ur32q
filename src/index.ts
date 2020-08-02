@@ -4,7 +4,7 @@ import {
     List,
     Input,
 } from './nodes/index';
-import { map } from './lib/utils';
+import { map, compose } from './lib/utils';
 import { createStore } from './lib/Publisher';
 import If from './nodes/If';
 import './style.less'
@@ -31,19 +31,23 @@ const TaskView = (
     const toggleSelect = () => $isSelected.set(isSelected => !isSelected);
 
     return Div(
-        If($isSelected, () => String('selected')),
         String(task.title),
         Div(String('X'))
             .on('click', () => removeTask(task.id))
     )
         .className('task horizontal')
+        .withClass($isSelected, 'selected')
         .on('click', toggleSelect);
 }
 
 root.appendChild(
     Div(
         Div(
-            String(map($tasks)(arr => arr.length)),
+            String(
+                map<Task[], number>(arr => arr.length + arr.length % 2)($tasks)
+            ),
+        ),
+        Div(
             String($input),
         ),
         Input($input)
