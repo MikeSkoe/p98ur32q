@@ -1,14 +1,4 @@
-export interface IView<E extends HTMLElement | Text> {
-    node: E,
-    remove: () => void,
-    on: <K extends keyof HTMLElementEventMap>(
-        type: K,
-        listener: (this: E, ev: HTMLElementEventMap[K]) => any,
-    ) => IView<E>;
-    className: (className: string) => IView<E>;
-}
-
-export abstract class View<E extends HTMLElement | Text> implements IView<E> {
+export abstract class View<E extends HTMLElement | Text> {
     abstract node: E;
 
     remove = () => {
@@ -30,7 +20,7 @@ export abstract class View<E extends HTMLElement | Text> implements IView<E> {
 
     className = (className: string) => {
         if (this.node instanceof HTMLElement) {
-            this.node.classList.add(className);
+            this.node.className = className;
         }
 
         return this;

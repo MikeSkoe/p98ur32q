@@ -15,4 +15,4 @@ class String extends View<Text> {
     }
 }
 
-export default String;
+export default (str: Publisher<unknown> | string) => new String(str);

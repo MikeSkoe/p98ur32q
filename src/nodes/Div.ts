@@ -19,4 +19,4 @@ class Div extends View<HTMLDivElement> {
     };
 }
 
-export default Div;
+export default (...children: View<HTMLElement | Text>[]) => new Div(...children);

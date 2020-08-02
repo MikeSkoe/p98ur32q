@@ -17,4 +17,4 @@ class Input extends View<HTMLInputElement>{
 
 }
 
-export default Input;
+export default (pub: Publisher<string>) => new Input(pub);

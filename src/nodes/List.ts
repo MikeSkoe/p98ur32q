@@ -81,4 +81,7 @@ class List<T extends WithId> extends View<HTMLDivElement> {
     }
 }
 
-export default List;
+export default <T extends WithId>(
+    data: Publisher<T[]>,
+    render: (item: T) => View<HTMLElement>,
+) => new List(data, render);

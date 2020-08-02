@@ -17,4 +17,4 @@ class Button extends View<HTMLButtonElement> {
     }
 }
 
-export default Button;
+export default (title: string, onClick?: HTMLButtonElement['onclick']) => new Button(title, onClick);

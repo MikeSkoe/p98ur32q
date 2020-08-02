@@ -5,7 +5,8 @@ import {
     Input,
 } from './nodes/index';
 import { map } from './lib/utils';
-import { createStore, Publisher } from './lib/Publisher';
+import { createStore } from './lib/Publisher';
+import If from './nodes/If';
 
 const root = document.querySelector('#root');
 
@@ -24,19 +25,27 @@ const removeTask = (id: string) => $tasks.set(arr => arr.filter(item => item.id 
 
 const TaskView = (
     task: Task,
-) => new Div(
-    new String(task.title)
-)
-    .on('click', () => removeTask(task.id))
-    .className('task');
+) => {
+    const $isSelected = createStore(false);
+    const toggleSelect = () => $isSelected.set(isSelected => !isSelected);
+
+    return Div(
+        If($isSelected, () => String('selected')),
+        String(task.title),
+        Div(String('X'))
+            .on('click', () => removeTask(task.id))
+    )
+        .className('task horizontal')
+        .on('click', toggleSelect);
+}
 
 root.appendChild(
-    new Div(
-        new Div(
-            new String(map($tasks)(arr => arr.length)),
-            new String($input),
+    Div(
+        Div(
+            String(map($tasks)(arr => arr.length)),
+            String($input),
         ),
-        new Input($input)
+        Input($input)
             .on('keydown', e => {
                 if (e.key === 'Enter') {
                     addTask({
@@ -46,7 +55,7 @@ root.appendChild(
                     setInput('');
                 }
             }),
-        new List(
+        List(
             $tasks,
             TaskView,
         ),
