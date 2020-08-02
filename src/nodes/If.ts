@@ -1,12 +1,9 @@
 import { Publisher } from '../lib/Publisher';
 import { View } from '../lib/View';
+import PlaceHolder from './PlaceHolder';
 
-class PlaceHolder extends View<Text> {
+class If extends View<HTMLElement | Text> {
     node = document.createTextNode('');
-}
-
-class If extends View<HTMLDivElement> {
-    node = document.createElement('div');
 
     constructor(
         pub: Publisher<boolean>,

@@ -1,6 +1,6 @@
 import { Publisher } from "./Publisher";
 
-export abstract class View<E extends HTMLElement | Text> {
+export abstract class View<E extends (HTMLElement | Text)> {
     abstract node: E;
 
     remove = () => {
