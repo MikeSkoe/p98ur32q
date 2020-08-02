@@ -2,11 +2,11 @@
   "compilerOptions": {
     "outDir": "public",
     "allowJs": true,
-      "sourceMap": true,
-      "removeComments": true,
-      "target": "esnext"
+    "sourceMap": true,
+    "removeComments": true,
+    "target": "esnext"
   },
   "include": [
     "./src/**/*"
-  ]
+  ],
 }

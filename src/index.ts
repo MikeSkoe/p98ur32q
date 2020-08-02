@@ -7,6 +7,7 @@ import {
 import { map } from './lib/utils';
 import { createStore } from './lib/Publisher';
 import If from './nodes/If';
+import './style.less'
 
 const root = document.querySelector('#root');
 
