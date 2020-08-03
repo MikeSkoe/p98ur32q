@@ -3,7 +3,8 @@ import { View } from '../lib/View';
 import PlaceHolder from './PlaceHolder';
 
 class If extends View<HTMLElement | Text> {
-    node = document.createTextNode('');
+    node = document.createElement('div');
+    currentNode: View<HTMLElement | Text> = PlaceHolder();
 
     constructor(
         pub: Publisher<boolean>,
@@ -12,15 +13,17 @@ class If extends View<HTMLElement | Text> {
     ) {
         super();
 
+
         this.unsubs.push(pub.sub(val => {
             const newNode = 
                 val
                     ? element()
                 : another
                     ? another()
-                    : new PlaceHolder();
-
-            this.node.replaceWith(newNode.node);
+                    : PlaceHolder();
+            this.currentNode.remove();
+            this.currentNode = newNode;
+            this.node.appendChild(newNode.node);
         }));
     }
 }

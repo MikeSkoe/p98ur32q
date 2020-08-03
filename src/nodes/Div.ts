@@ -12,7 +12,7 @@ class Div extends View<HTMLDivElement> {
         this.children = children;
     }
     
-    remove = () => {
+    remove () {
         super.remove();
 
         this.children.forEach(child => child.remove())

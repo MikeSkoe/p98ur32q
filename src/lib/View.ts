@@ -3,7 +3,7 @@ import { Publisher } from "./Publisher";
 export abstract class View<E extends (HTMLElement | Text)> {
     abstract node: E;
 
-    remove = () => {
+    remove () {
         this.node.remove();
         this.unsubs.forEach(unsub => unsub());
     }

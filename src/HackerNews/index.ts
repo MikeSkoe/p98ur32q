@@ -6,10 +6,18 @@ import {
 import { createStore, Publisher } from '../lib/Publisher';
 import PostList from './components/PostList';
 import './style.less'
+import Router from '../nodes/Router';
+import Link from '../nodes/Link';
 
 const App = Div(
     Div(String('Hacker News!')),
-    PostList(),
+    Div(Link('#/', 'home')),
+    Div(Link('#/post', 'post')),
+    // PostList(),
+    Router({
+        '\/': () => PostList().className('post-list'),
+        '\/post': () => Div(String('post')),
+    }).className('router'),
 );
 
 export default App;

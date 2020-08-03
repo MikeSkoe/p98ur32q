@@ -4,4 +4,4 @@ class PlaceHolder extends View<Text> {
     node = document.createTextNode('');
 }
 
-export default PlaceHolder;
+export default () => new PlaceHolder();
