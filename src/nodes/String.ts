@@ -10,7 +10,9 @@ class String extends View<Text> {
         if (typeof str === 'string') {
             this.node.textContent = str;
         } else {
-            this.unsubs.push(str.sub(str => this.node.textContent = `${str}`));
+            this.unsubs.push(str.sub(str => {
+                this.node.textContent = `${str}`
+            }));
         }
     }
 }

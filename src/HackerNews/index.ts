@@ -8,15 +8,14 @@ import PostList from './components/PostList';
 import './style.less'
 import Router from '../nodes/Router';
 import Link from '../nodes/Link';
+import PostItem from './components/PostItem';
 
 const App = Div(
     Div(String('Hacker News!')),
     Div(Link('#/', String('home'))),
-    Div(Link('#/post/:id/:id', String('post'))),
-    // PostList(),
     Router({
-        '\/': () => PostList().className('post-list'),
-        '\/post/:id/:another': (...ids: string[]) => Div(String(ids.join('!'))),
+        '/': () => PostList(),
+        '/post': ([id]) => PostItem({id}),
     }).className('router'),
 );
 

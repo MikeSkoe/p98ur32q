@@ -2,7 +2,7 @@ import { View } from '../lib/View';
 import PlaceHolder from './PlaceHolder';
 
 interface RouterOptions {
-    [key: string]: (...args: string[]) => View<HTMLElement | Text>
+    [key: string]: (args: string[]) => View<HTMLElement | Text>
 }
 
 class Router extends View<HTMLElement | Text> {
@@ -23,19 +23,18 @@ class Router extends View<HTMLElement | Text> {
 
     render = () => {
         const currentLocation = this.getLocation();
-        console.log(currentLocation, location.hash)
-
         this.currentView.remove();
-        for (const key of Object.keys(this.routerOptions)) {
-            if (
-                key.replace(/:(.*?)(\/|$)/gu, '').replace(/\/$/gu, '')
-                === currentLocation
-            ) {
-                console.log(location.hash.replace(currentLocation, '').split('\/').join('!'));
+
+        loop: for (const key of Object.keys(this.routerOptions)) {
+            const keyReplaced = key.replace(/^\//u, '').replace(/^$/u, '/')
+            const currentLocationReplaced = currentLocation.replace(/^\//u, '').replace(/^$/u, '/')
+
+            if (currentLocationReplaced.startsWith(keyReplaced)) {
                 this.currentView =
-                    (this.routerOptions[currentLocation] ?? PlaceHolder)(
-                        ...location.hash.replace(currentLocation, '').split('\/')
+                    this.routerOptions[key](
+                        currentLocation.replace(key, '').split('/').slice(1),
                     );
+                    break loop;
             }
         }
         this.node.appendChild(this.currentView.node);
@@ -43,10 +42,7 @@ class Router extends View<HTMLElement | Text> {
 
     getLocation = () => 
         location.hash
-            .slice(1)
-            .replace(/:(.*?)(\/|$)/gu, '')
-            .replace(/\/$/gu, '')
-            .replace(/^$/gu, '/');
+            .slice(1);
 }
 
 export default (options: RouterOptions) => new Router(options);

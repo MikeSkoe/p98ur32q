@@ -23,7 +23,6 @@ class List<T extends WithId> extends View<HTMLDivElement> {
         render: (item: T) => View<HTMLElement>,
     ) {
         super();
-        console.log(this.node);
 
         this.unsubs.push(
             data.sub(newArr => {
@@ -93,7 +92,6 @@ class List<T extends WithId> extends View<HTMLDivElement> {
     }
 
     remove () {
-        console.log('remove list');
         super.remove();
 
         this.node.childNodes.forEach(child => child.remove());

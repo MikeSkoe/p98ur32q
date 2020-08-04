@@ -6,6 +6,7 @@ import {
 import { map, WithId } from '../../lib/utils';
 import { Post } from '../types/post';
 import If from '../../nodes/If';
+import Link from '../../nodes/Link';
 
 const fetchPost = async ($postData: Publisher<Post>, postId: WithId) => {
     const data = await fetch(`https://hacker-news.firebaseio.com/v0/item/${postId.id}.json`);
@@ -26,7 +27,8 @@ const PostItem = (postId: WithId) => {
     const $postData = createStore<Post | null>(null);
     fetchPost($postData, postId);
 
-    return Div(
+    return Link(
+        `#post/${postId.id}`,
         If(
             map(val => val !== null)($postData),
             () => Item($postData.get()),
