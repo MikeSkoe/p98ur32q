@@ -3,14 +3,22 @@ import { View } from "../lib/View";
 class Link extends View<HTMLAnchorElement> {
     node = document.createElement('a');
 
-    constructor(href: string, label: string) {
+    private children: View<HTMLElement | Text>[];
+
+    constructor(href: string, ...children: View<HTMLElement | Text>[]) {
         super();
 
         this.node.href = href;
-        this.node.appendChild(
-            document.createTextNode(label),
-        )
+        children.forEach(child => this.node.appendChild(child.node));
+        this.children = children;
+    }
+
+    remove () {
+        super.remove();
+
+        this.children.forEach(child => child.remove())
     }
 }
 
-export default (href: string, label: string) => new Link(href, label);
+export default (href: string, ...children: View<HTMLElement | Text>[]) =>
+    new Link(href, ...children);

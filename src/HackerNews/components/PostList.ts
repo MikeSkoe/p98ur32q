@@ -18,11 +18,9 @@ const PostList = () => {
     const $postIds = createStore<WithId[]>([]);
     fetchIds($postIds);
 
-    return Div(
-        If(map<WithId[], boolean>(arr => arr.length === 0)($postIds),
-            () => String('LOADING'),
-            () => List($postIds, PostItem),
-        )
+    return If(map<WithId[], boolean>(arr => arr.length === 0)($postIds),
+        () => String('LOADING'),
+        () => List($postIds, PostItem),
     );
 };
 

@@ -11,12 +11,12 @@ import Link from '../nodes/Link';
 
 const App = Div(
     Div(String('Hacker News!')),
-    Div(Link('#/', 'home')),
-    Div(Link('#/post', 'post')),
+    Div(Link('#/', String('home'))),
+    Div(Link('#/post/:id/:id', String('post'))),
     // PostList(),
     Router({
         '\/': () => PostList().className('post-list'),
-        '\/post': () => Div(String('post')),
+        '\/post/:id/:another': (...ids: string[]) => Div(String(ids.join('!'))),
     }).className('router'),
 );
 
