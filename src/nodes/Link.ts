@@ -3,9 +3,9 @@ import { View } from "../lib/View";
 class Link extends View<HTMLAnchorElement> {
     node = document.createElement('a');
 
-    private children: View<HTMLElement | Text>[];
+    private children: View[];
 
-    constructor(href: string, ...children: View<HTMLElement | Text>[]) {
+    constructor(href: string, ...children: View[]) {
         super();
 
         this.node.href = href;
@@ -20,5 +20,5 @@ class Link extends View<HTMLAnchorElement> {
     }
 }
 
-export default (href: string, ...children: View<HTMLElement | Text>[]) =>
+export default (href: string, ...children: View[]) =>
     new Link(href, ...children);

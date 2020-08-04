@@ -7,6 +7,8 @@ import { map, WithId } from '../../lib/utils';
 import { Post } from '../types/post';
 import If from '../../nodes/If';
 import Link from '../../nodes/Link';
+import { View } from '../../lib/View';
+import PlaceHolder from '../../nodes/PlaceHolder';
 
 const fetchPost = async ($postData: Publisher<Post>, postId: WithId) => {
     const data = await fetch(`https://hacker-news.firebaseio.com/v0/item/${postId.id}.json`);
@@ -23,16 +25,18 @@ const Item = (post: Post) =>
         Div(String(`score: ${post.score}`)),
     ).className('post');
 
-const PostItem = (postId: WithId) => {
+const PostItem = (postId: WithId, children?: (post: Post) => View) => {
     const $postData = createStore<Post | null>(null);
     fetchPost($postData, postId);
 
-    return Link(
-        `#post/${postId.id}`,
-        If(
-            map(val => val !== null)($postData),
-            () => Item($postData.get()),
-        )
+    return If(
+        map(val => val !== null)($postData),
+        () => Div(
+            Link(`#post/${postId.id}`, Item($postData.get())),
+            children
+                ? children($postData.get())
+                : PlaceHolder(),
+        ),
     );
 };
 

@@ -2,14 +2,14 @@ import { View } from '../lib/View';
 import PlaceHolder from './PlaceHolder';
 
 interface RouterOptions {
-    [key: string]: (args: string[]) => View<HTMLElement | Text>
+    [key: string]: (args: string[]) => View
 }
 
-class Router extends View<HTMLElement | Text> {
+class Router extends View {
     private routerOptions: RouterOptions;
 
     node = document.createElement('div');
-    currentView: View<HTMLElement | Text> = PlaceHolder();
+    currentView: View = PlaceHolder();
 
     constructor(options: RouterOptions) {
         super();

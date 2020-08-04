@@ -3,9 +3,9 @@ import { View } from '../lib/View';
 class Div extends View<HTMLDivElement> {
     node: HTMLDivElement = document.createElement('div');
 
-    private children: View<HTMLElement | Text>[];
+    private children: View[];
 
-    constructor (...children: View<HTMLElement | Text>[]) {
+    constructor (...children: View[]) {
         super();
 
         children.forEach(child => this.node.appendChild(child.node));
@@ -19,4 +19,4 @@ class Div extends View<HTMLDivElement> {
     };
 }
 
-export default (...children: View<HTMLElement | Text>[]) => new Div(...children);
+export default (...children: View[]) => new Div(...children);
