@@ -8,6 +8,6 @@ export interface Post extends WithId {
     score: number;
     time: number;
     title: string;
-    type: string;
+    type: 'post';
     url: string;
 }

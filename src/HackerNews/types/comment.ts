@@ -5,4 +5,7 @@ export interface Comment extends WithId {
     score: number;
     time: number;
     text: string;
+    kids: number[];
+    parent: number;
+    type: 'comment';
 }

@@ -7,16 +7,15 @@ class If extends View<HTMLElement | Text> {
     currentNode: View<HTMLElement | Text> = PlaceHolder();
 
     constructor(
-        pub: Publisher<boolean>,
+        pub: Publisher<boolean> | boolean,
         element: () => View<HTMLElement | Text>,
         another?: () => View<HTMLElement | Text>,
     ) {
         super();
 
-
-        this.unsubs.push(pub.sub(val => {
+        if (typeof pub === 'boolean') {
             const newNode = 
-                val
+                pub
                     ? element()
                 : another
                     ? another()
@@ -24,12 +23,24 @@ class If extends View<HTMLElement | Text> {
             this.currentNode.remove();
             this.currentNode = newNode;
             this.node.appendChild(newNode.node);
-        }));
+        } else {
+            this.unsubs.push(pub.sub(val => {
+                const newNode = 
+                    val
+                        ? element()
+                    : another
+                        ? another()
+                        : PlaceHolder();
+                this.currentNode.remove();
+                this.currentNode = newNode;
+                this.node.appendChild(newNode.node);
+            }));
+        }
     }
 }
 
 export default (
-    pub: Publisher<boolean>,
+    pub: Publisher<boolean> | boolean,
     element: () => View<HTMLElement | Text>,
     another?: () => View<HTMLElement | Text>,
 ) => new If(pub, element, another);

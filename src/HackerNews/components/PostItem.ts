@@ -9,14 +9,9 @@ import If from '../../nodes/If';
 import Link from '../../nodes/Link';
 import { View } from '../../lib/View';
 import PlaceHolder from '../../nodes/PlaceHolder';
+import * as API from '../api/index';
 
-const fetchPost = async ($postData: Publisher<Post>, postId: WithId) => {
-    const data = await fetch(`https://hacker-news.firebaseio.com/v0/item/${postId.id}.json`);
-    const jsonData = await data.json();
-    $postData.set(() => jsonData);
-};
-
-const Item = (post: Post) =>
+export const Item = (post: Post) =>
     Div(
         Div(String(post.title))
             .className('title'),
@@ -27,7 +22,12 @@ const Item = (post: Post) =>
 
 const PostItem = (postId: WithId, children?: (post: Post) => View) => {
     const $postData = createStore<Post | null>(null);
-    fetchPost($postData, postId);
+
+    (async () => {
+        const postData = await API.item<Post>(postId.id);
+
+        $postData.set(() => postData);
+    })();
 
     return If(
         map(val => val !== null)($postData),

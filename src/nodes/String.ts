@@ -4,12 +4,12 @@ import { View } from '../lib/View';
 class String extends View<Text> {
     node = document.createTextNode('');
 
-    constructor(str: Publisher<unknown> | string) {
+    constructor(str: Publisher<unknown> | string | number) {
         super();
 
-        if (typeof str === 'string') {
-            this.node.textContent = str;
-        } else {
+        if (typeof str === 'string' || typeof str === 'number') {
+            this.node.textContent = `${str}`;
+        } else if (typeof str === 'object' && 'sub' in str) {
             this.unsubs.push(str.sub(str => {
                 this.node.textContent = `${str}`
             }));
@@ -17,4 +17,4 @@ class String extends View<Text> {
     }
 }
 
-export default (str: Publisher<unknown> | string) => new String(str);
+export default (str: Publisher<unknown> | string | number) => new String(str);
