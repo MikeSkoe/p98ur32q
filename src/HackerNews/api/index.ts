@@ -15,5 +15,5 @@ export const topStories = async () => {
     const ids = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json')
     const jsonData: number[] = await ids.json();
 
-    return jsonData.slice(0, 5).map(id => ({id}));
+    return jsonData.slice(0, 25).map(id => ({id}));
 };

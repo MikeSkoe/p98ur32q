@@ -17,6 +17,7 @@ class Div extends View<HTMLDivElement> {
 
         this.children.forEach(child => child.remove())
     };
+
 }
 
 export default (...children: View[]) => new Div(...children);

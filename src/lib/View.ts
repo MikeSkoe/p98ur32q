@@ -1,5 +1,7 @@
 import { Publisher } from "./Publisher";
 
+const isHTMLElement = (node: HTMLElement | Text): node is HTMLElement => 'style' in node;
+
 export abstract class View<E extends (HTMLElement | Text) = (HTMLElement | Text)> {
     abstract node: E;
 
@@ -44,6 +46,19 @@ export abstract class View<E extends (HTMLElement | Text) = (HTMLElement | Text)
                 }
             })
         );
+
+        return this;
+    }
+
+    style = (property: string, pub: Publisher<string>) => {
+        if (isHTMLElement(this.node)) {
+            this.unsubs.push(
+                pub.sub(value => {
+                    // @ts-ignore
+                    this.node.style[property] = value
+                })
+            );
+        }
 
         return this;
     }
