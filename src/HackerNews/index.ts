@@ -11,23 +11,27 @@ import Link from '../nodes/Link';
 import PostItem from './components/PostItem';
 import { map } from '../lib/utils';
 import * as API from './api/index';
-import { Comment } from './types/comment';
+import { TComment, isDeleted  } from './types/comment';
 import If from '../nodes/If';
+import InnerHTML from '../nodes/InnerHTML';
 
-const Comment = (comment: Comment) =>
-    Div(
-        Div(String(comment.by)).className('by'),
-        String(comment.text),
-        If(Boolean(comment.kids),
-            () => Div(String(`(${comment.kids?.length})`)).className('kids'),
-        )
-    ).className('comment');
+const Comment = (comment: TComment) =>
+    isDeleted(comment)
+        ? Div(String('deleted message')).className('comment-deleted')
+        : Div(
+            Div(String(comment.by)).className('by'),
+            InnerHTML(comment.text),
+            If(Boolean(comment.kids),
+                () => Div(String(`(${comment.kids?.length})`)).className('kids'),
+            )
+        ).className('comment');
 
 const CommentList = (kids: number[]) => {
-    const $comments = createStore<Comment[] | null>(null);
+    const $comments = createStore<TComment[] | null>(null);
 
     (async () => {
-        const comments = await API.items<Comment>(kids);
+        const comments = await API.items<TComment>(kids);
+        console.log(comments);
 
         $comments.set(() => comments);
     })();
