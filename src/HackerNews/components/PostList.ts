@@ -1,22 +1,25 @@
-import { createStore, Publisher } from '../../lib/Publisher';
-import { List, Div, String } from '../../nodes/index';
+import { List, String } from '../../nodes/index';
 import PostItem from './PostItem';
-import { WithId, map } from '../../lib/utils';
+import { WithId } from '../../lib/utils';
 import If from '../../nodes/If';
 import * as API from '../api/index';
+import { newState } from '../../lib/Publisher';
 
 const PostList = () => {
-    const $postIds = createStore<WithId[]>([]);
+    const $postIds = newState<WithId[]>();
+    const $showLoader = newState<boolean>();
 
     (async () => {
         const postIds = await API.topStories();
 
-        $postIds.set(() => postIds);
+        $showLoader.next(false);
+        $postIds.next(postIds);
     })();
 
-    return If(map<WithId[], boolean>(arr => arr.length === 0)($postIds),
+    return If(
+        $showLoader.observable,
         () => String('LOADING'),
-        () => List($postIds, PostItem),
+        () => List($postIds.observable, PostItem),
     );
 };
 

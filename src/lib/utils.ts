@@ -1,27 +1,6 @@
-import { Publisher } from './Publisher';
-
 export interface WithId {
     id: string | number;
 }
-
-export const map = <T, A>(mapFn: (val: T) => A) => (pub: Publisher<T>): Publisher<A> => {
-    let prevVal;
-
-    return {
-        sub: callback => pub.sub(val => {
-            const newVal = mapFn(val);
-
-            if (newVal !== prevVal) {
-                callback(newVal);
-                prevVal = newVal;
-            }
-        }),
-        // @ts-ignore
-        set: pub.set,
-        // @ts-ignore
-        get: pub.get,
-    }
-};
 
 export const compose = <T>(...fns: ((...args: T[]) => T)[]) =>
     fns.reduceRight((prevFn, nextFn) =>

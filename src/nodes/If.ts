@@ -1,13 +1,13 @@
-import { Publisher } from '../lib/Publisher';
 import { View } from '../lib/View';
 import PlaceHolder from './PlaceHolder';
+import * as Observable from 'zen-observable';
 
 class If extends View<HTMLElement | Text> {
     node = document.createElement('div');
     currentNode: View<HTMLElement | Text> = PlaceHolder();
 
     constructor(
-        pub: Publisher<boolean> | boolean,
+        pub: Observable<boolean> | boolean,
         element: () => View<HTMLElement | Text>,
         another?: () => View<HTMLElement | Text>,
     ) {
@@ -24,23 +24,25 @@ class If extends View<HTMLElement | Text> {
             this.currentNode = newNode;
             this.node.appendChild(newNode.node);
         } else {
-            this.unsubs.push(pub.sub(val => {
-                const newNode = 
-                    val
-                        ? element()
-                    : another
-                        ? another()
-                        : PlaceHolder();
-                this.currentNode.remove();
-                this.currentNode = newNode;
-                this.node.appendChild(newNode.node);
-            }));
+            this.pushUnsub(
+                pub.subscribe(val => {
+                    const newNode = 
+                        val
+                            ? element()
+                        : another
+                            ? another()
+                            : PlaceHolder();
+                    this.currentNode.remove();
+                    this.currentNode = newNode;
+                    this.node.appendChild(newNode.node);
+                }).unsubscribe,
+            );
         }
     }
 }
 
 export default (
-    pub: Publisher<boolean> | boolean,
+    pub: Observable<boolean> | boolean,
     element: () => View<HTMLElement | Text>,
     another?: () => View<HTMLElement | Text>,
 ) => new If(pub, element, another);

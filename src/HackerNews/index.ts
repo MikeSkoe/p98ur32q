@@ -11,8 +11,14 @@ const App = Div(
     Div(Link('#/', String('home'))),
     Router({
         '/': () => PostList(),
-        '/post': ([id]) => PostItem({id}, post => CommentList(post.kids)),
-    }).className('router'),
+        '/post': ([id]) => PostItem({id},
+            post => CommentList(post)
+        ),
+    }).onRemove(node => {
+        if ('className' in node) {
+            node.classList.add('router');
+        }
+    }),
 );
 
 export default App;

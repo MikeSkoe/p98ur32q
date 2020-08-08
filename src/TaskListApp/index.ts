@@ -3,7 +3,6 @@ import {
     String,
     List,
 } from '../nodes/index';
-import { map } from '../lib/utils';
 import { Task } from './types/task';
 import TaskView from './components/TaskView';
 import TaskInput from './components/TaskInput';
@@ -14,7 +13,7 @@ const App =
     Div(
         Div(
             String(
-                map<Task[], number>(arr => arr.length + arr.length % 2)($tasks)
+                $tasks.map(arr => arr.length + arr.length % 2)
             ),
         ),
         Div(String($input)),

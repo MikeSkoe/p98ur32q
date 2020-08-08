@@ -1,22 +1,32 @@
-import { createStore } from '../../lib/Publisher';
 import { TComment } from '../types/comment';
 import * as API from '../api/index';
-import { map } from '../../lib/utils';
-import { List } from '../../nodes/index';
+import { List, Div } from '../../nodes/index';
 import If from '../../nodes/If';
 import { CommentItem } from './ComponentItem';
+import * as Observable from 'zen-observable';
+import { Post } from '../types/post';
+import { newState } from '../../lib/Publisher';
 
-export const CommentList = (kids: number[]) => {
-    const $comments = createStore<TComment[] | null>(null);
+export const CommentList = (post: Observable<Post>) => {
+    const $comments = newState<TComment[]>();
+    const $showComponent = newState<boolean>();
 
     (async () => {
-        const comments = await API.items<TComment>(kids);
+    })()
 
-        $comments.set(() => comments);
-    })();
-
-    return If(
-        map(val => val !== null)($comments),
-        () => List($comments, CommentItem),
+    return Div(
+        If(
+            $showComponent.observable,
+            () => List($comments.observable, CommentItem),
+        )
+        .onRemove(() => 
+            post.subscribe(val => {
+                API.items<TComment>(val.kids)
+                    .then(comments => {
+                        $showComponent.next(true);
+                        $comments.next(comments);
+                    });
+            }).unsubscribe
+        )
     );
 };

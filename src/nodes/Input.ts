@@ -1,20 +1,20 @@
-import { Publisher } from '../lib/Publisher';
 import { View } from '../lib/View';
+import PushStream from 'zen-push';
 
 class Input extends View<HTMLInputElement>{
     node = document.createElement('input');
 
-    constructor(pub: Publisher<string>) {
+    constructor(pub: PushStream<string>) {
         super();
 
-        this.unsubs.push(
-            pub.sub(value => this.node.value = value)
+        this.pushUnsub(
+            pub.observable.subscribe(value => this.node.value = value).unsubscribe,
         );
         this.node.oninput = (event: InputEvent) => {
-            pub.set(() => (<HTMLInputElement>event.target).value);
+            pub.next((<HTMLInputElement>event.target).value);
         }
     }
 
 }
 
-export default (pub: Publisher<string>) => new Input(pub);
+export default (pub: PushStream<string>) => new Input(pub);

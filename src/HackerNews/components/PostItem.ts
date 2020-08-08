@@ -1,9 +1,8 @@
-import { createStore } from '../../lib/Publisher';
 import {
     Div,
     String,
 } from '../../nodes/index';
-import { map, WithId } from '../../lib/utils';
+import { WithId } from '../../lib/utils';
 import { Post } from '../types/post';
 import If from '../../nodes/If';
 import Link from '../../nodes/Link';
@@ -11,19 +10,21 @@ import { View } from '../../lib/View';
 import PlaceHolder from '../../nodes/PlaceHolder';
 import * as API from '../api/index';
 import Img from '../../nodes/Img';
+import { newState } from '../../lib/Publisher';
+import * as Observable from 'zen-observable';
 
-export const Item = (post: Post) =>
+export const Item = (post: Observable<Post>) =>
     Div(
         Img('https://i.ytimg.com/vi/5qap5aO4i9A/hq720_live.jpg?sqp=CKCKsfkF-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAxKwomOahEcytM1X-sHZQrHBkxfA')
-            .className('post-image'),
-        Div(String(post.title))
-            .className('title'),
-        Div(String(`type: ${post.type}`)),
-        Div(String(`link: ${post.url}`)),
-        Div(String(`score: ${post.score}`)),
-    ).className('post');
+            .onRemove(node => node.classList.add('post-image')),
+        Div(String(post.map(val => val.title)))
+            .onRemove(node => node.classList.add('title')),
+        Div(String(post.map(val => `type: ${val.type}`))),
+        Div(String(post.map(val => `link: ${val.url}`))),
+        Div(String(post.map(val => `score: ${val.score}`))),
+    ).onRemove(node => node.classList.add('post'));
 
-const getY = (node: View<HTMLDivElement>) =>
+const getY = (node: View<HTMLElement>) =>
     node.node.getBoundingClientRect().y;
 
 const range = (value: number) => {
@@ -36,35 +37,44 @@ const range = (value: number) => {
 
 const center = (num: number) => Math.abs(num - 0.5);
 
-const PostItem = (postId: WithId, children?: (post: Post) => View) => {
-    const $postData = createStore<Post | null>(null);
-    const $y = createStore(0);
+const PostItem = (
+    postId: WithId,
+    children?: (post: Observable<Post>,
+) => View) => {
+    const $postData = newState<Post>();
+    const $showItem = newState<boolean>();
+    const $y = newState<number>();
+    let y = 0;
 
-    const node = If(
-        map(val => val !== null)($postData),
-        () => Div(
-            Link(`#post/${postId.id}`, Item($postData.get())),
-            children
-                ? children($postData.get())
-                : PlaceHolder(),
-        )
-        .className('post-item'),
-    );
+    const updateY = () => $y.next(range(getY(node as View<HTMLElement>)));
 
-    const updateY = () => $y.set(() => range(getY(node)));
+    const node = Div(
+        If(
+            $showItem.observable,
+            () => Div(
+                Link(`#post/${postId.id}`, Item($postData.observable)),
+                children
+                    ? children($postData.observable)
+                    : PlaceHolder(),
+            )
+    ))
+        .onRemove(node => node.classList.add('post-item'))
+        .onRemove(() => $y.observable.subscribe(val => y = val).unsubscribe);
 
     (async () => {
         const postData = await API.item<Post>(postId.id);
 
         const step = () => {
-            node.node.style.transform = `translateX(-${center($y.get()) * 100}px)`;
+            node.node.style.transform = `translateX(-${center(y) * 100}px)`;
 
             window.requestAnimationFrame(step);
         }
+
         window.requestAnimationFrame(step);
         window.addEventListener('scroll', updateY);
-        node.unsubs.push(() => window.removeEventListener('scroll', updateY));
-        $postData.set(() => postData);
+        node.pushUnsub(() => window.removeEventListener('scroll', updateY));
+        $showItem.next(true);
+        $postData.next(postData);
     })();
 
     return node;

@@ -5,11 +5,15 @@ import If from "../../nodes/If";
 
 export const CommentItem = (comment: TComment) =>
     isDeleted(comment)
-        ? Div(String('deleted message')).className('comment-deleted')
+        ? Div(String('deleted message'))
+            .onRemove(node => node.classList.add('comment-deleted'))
         : Div(
-            Div(String(comment.by)).className('by'),
+            Div(String(comment.by))
+                .onRemove(node => node.classList.add('by')),
             InnerHTML(comment.text),
             If(Boolean(comment.kids),
-                () => Div(String(`(${comment.kids?.length})`)).className('kids'),
+                () => Div(String(`(${comment.kids?.length})`))
+                    .onRemove(node => node.classList.add('kids')),
             )
-        ).className('comment');
+        )
+            .onRemove(node => node.classList.add('comment'));

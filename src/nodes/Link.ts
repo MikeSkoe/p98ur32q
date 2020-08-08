@@ -1,4 +1,4 @@
-import { View } from "../lib/View";
+import { View } from '../lib/View';
 
 class Link extends View<HTMLAnchorElement> {
     node = document.createElement('a');

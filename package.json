@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "fix-types": "cp -a @types/. ./node_modules/@types",
     "dev": "cross-env NODE_ENV=development webpack-dev-server",
     "build": "cross-env NODE_ENV=production webpack"
   },
@@ -11,9 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/zen-observable": "^0.8.0",
     "express": "^4.17.1",
     "less-watch-compiler": "^1.14.1",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.3",
+    "zen-push": "^0.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",

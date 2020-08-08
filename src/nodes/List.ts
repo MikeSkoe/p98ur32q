@@ -1,11 +1,11 @@
-import { Publisher } from '../lib/Publisher';
 import { WithId, isIn, notIn } from '../lib/utils';
 import { View } from '../lib/View';
+import * as Observable from 'zen-observable';
 
-const setKey = <T extends HTMLElement>(
+const setKey = (
     key: string,
 ) => (
-    node: View<T>,
+    node: View<HTMLElement>,
 ) => {
     node.node.dataset['key'] = key;
 
@@ -19,13 +19,14 @@ class List<T extends WithId> extends View<HTMLDivElement> {
     private viewArray: View<HTMLElement>[] = [];
 
     constructor(
-        data: Publisher<T[]>,
+        data: Observable<T[]>,
         render: (item: T) => View<HTMLElement>,
     ) {
         super();
+        this.node.className = 'list';
 
-        this.unsubs.push(
-            data.sub(newArr => {
+        this.pushUnsub(
+            data.subscribe(newArr => {
                 const addedVals = newArr.filter(notIn(this.prevArr));
                 const removedVals = this.prevArr.filter(notIn(newArr));
                 const oldWithoutRemoved = newArr.filter(notIn(removedVals));
@@ -37,7 +38,7 @@ class List<T extends WithId> extends View<HTMLDivElement> {
                 const isInRemoved = isIn(removedVals);
                 
                 this.viewArray = this.viewArray.filter(child => {
-                    if (isInRemoved({id: child.node.dataset['key']})) {
+                    if (isInRemoved({ id: child.node.dataset['key'] })) {
                         child.remove();
                         return false;
                     }
@@ -87,7 +88,7 @@ class List<T extends WithId> extends View<HTMLDivElement> {
                 )
 
                 this.prevArr = newArr;
-            })
+            }).unsubscribe
         )
     }
 
@@ -99,6 +100,6 @@ class List<T extends WithId> extends View<HTMLDivElement> {
 }
 
 export default <T extends WithId>(
-    data: Publisher<T[]>,
+    data: Observable<T[]>,
     render: (item: T) => View<HTMLElement>,
 ) => new List(data, render);
