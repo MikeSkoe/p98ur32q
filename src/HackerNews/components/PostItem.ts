@@ -12,17 +12,18 @@ import * as API from '../api/index';
 import Img from '../../nodes/Img';
 import { newState } from '../../lib/Publisher';
 import * as Observable from 'zen-observable';
+import { className } from '../../nodes/nodeManipulations';
 
 export const Item = (post: Observable<Post>) =>
     Div(
         Img('https://i.ytimg.com/vi/5qap5aO4i9A/hq720_live.jpg?sqp=CKCKsfkF-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAxKwomOahEcytM1X-sHZQrHBkxfA')
-            .onRemove(node => node.classList.add('post-image')),
+            .with(className('post-image')),
         Div(String(post.map(val => val.title)))
-            .onRemove(node => node.classList.add('title')),
+            .with(className('title')),
         Div(String(post.map(val => `type: ${val.type}`))),
         Div(String(post.map(val => `link: ${val.url}`))),
         Div(String(post.map(val => `score: ${val.score}`))),
-    ).onRemove(node => node.classList.add('post'));
+    ).with(className('post'));
 
 const getY = (node: View<HTMLElement>) =>
     node.node.getBoundingClientRect().y;
@@ -58,7 +59,7 @@ const PostItem = (
                     : PlaceHolder(),
             )
     ))
-        .onRemove(node => node.classList.add('post-item'))
+        .with(className('post-item'))
         .onRemove(() => $y.observable.subscribe(val => y = val).unsubscribe);
 
     (async () => {

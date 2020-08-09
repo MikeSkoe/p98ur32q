@@ -5,6 +5,7 @@ import Router from '../nodes/Router';
 import Link from '../nodes/Link';
 import PostItem from './components/PostItem';
 import { CommentList } from './components/CommentList';
+import { className } from '../nodes/nodeManipulations';
 
 const App = Div(
     Div(String('Hacker News!')),
@@ -14,11 +15,7 @@ const App = Div(
         '/post': ([id]) => PostItem({id},
             post => CommentList(post)
         ),
-    }).onRemove(node => {
-        if ('className' in node) {
-            node.classList.add('router');
-        }
-    }),
+    }).with(className('router')),
 );
 
 export default App;

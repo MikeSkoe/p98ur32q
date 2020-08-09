@@ -2,19 +2,21 @@
 export abstract class View<E extends (HTMLElement | Text) = (HTMLElement | Text)> {
     abstract node: E;
     private unsubs: (() => void)[] = [];
+    protected pushUnsub = this.unsubs.push
 
     remove () {
         this.node.remove();
         this.unsubs.forEach(unsub => unsub());
     }
 
-    pushUnsub = this.unsubs.push
+    with = (fn: (node: E) => void) => {
+        fn(this.node);
 
-    onRemove = (fn: (node: E) => (() => void) | void) => {
-        const callback = fn(this.node);
-        if (callback) {
-            this.pushUnsub(callback);
-        }
+        return this;
+    }
+
+    onRemove = (fn: () => void) => {
+        this.pushUnsub(fn);
 
         return this;
     }

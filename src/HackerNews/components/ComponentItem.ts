@@ -2,18 +2,19 @@ import { TComment, isDeleted } from "../types/comment";
 import { Div, String } from "../../nodes/index";
 import InnerHTML from "../../nodes/InnerHTML";
 import If from "../../nodes/If";
+import { className } from "../../nodes/nodeManipulations";
 
 export const CommentItem = (comment: TComment) =>
     isDeleted(comment)
         ? Div(String('deleted message'))
-            .onRemove(node => node.classList.add('comment-deleted'))
+            .with(className('comment-deleted'))
         : Div(
             Div(String(comment.by))
-                .onRemove(node => node.classList.add('by')),
+                .with(className('by')),
             InnerHTML(comment.text),
             If(Boolean(comment.kids),
                 () => Div(String(`(${comment.kids?.length})`))
-                    .onRemove(node => node.classList.add('kids')),
+                    .with(className('kids')),
             )
         )
-            .onRemove(node => node.classList.add('comment'));
+            .with(className('comment'));

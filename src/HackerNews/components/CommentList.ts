@@ -11,15 +11,12 @@ export const CommentList = (post: Observable<Post>) => {
     const $comments = newState<TComment[]>();
     const $showComponent = newState<boolean>();
 
-    (async () => {
-    })()
-
     return Div(
         If(
             $showComponent.observable,
             () => List($comments.observable, CommentItem),
         )
-        .onRemove(() => 
+        .onRemove(
             post.subscribe(val => {
                 API.items<TComment>(val.kids)
                     .then(comments => {
