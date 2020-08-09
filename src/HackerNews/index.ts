@@ -15,7 +15,8 @@ const App = Div(
         '/post': ([id]) => PostItem({id},
             post => CommentList(post)
         ),
-    }).with(className('router')),
+    })
+        .with(className('router')),
 );
 
 export default App;

@@ -1,8 +1,7 @@
-import { Div, String } from '../../nodes/index';
+import { Div } from '../../nodes/index';
 import { WithId } from '../../lib/utils';
 import { Post } from '../types/post';
 import If from '../../nodes/If';
-import Link from '../../nodes/Link';
 import { View } from '../../lib/View';
 import PlaceHolder from '../../nodes/PlaceHolder';
 import * as API from '../api/index';
@@ -11,8 +10,8 @@ import * as Observable from 'zen-observable';
 import { className } from '../../nodes/nodeManipulations';
 import PostUnit from './PostUnit';
 
-const PostItem = (
-    postId: WithId,
+const PostItem = <T extends WithId>(
+    postId: T,
     children?: (post: Observable<Post>,
 ) => View) => {
     const $postData = newState<Post>();
@@ -34,7 +33,7 @@ const PostItem = (
                 ? children($postData.observable)
                 : PlaceHolder(),
         ).with(className('post-item'))
-    )
+    );
 };
 
 export default PostItem;
