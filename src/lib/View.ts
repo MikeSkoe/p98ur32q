@@ -9,8 +9,12 @@ export abstract class View<E extends (HTMLElement | Text) = (HTMLElement | Text)
         this.unsubs.forEach(unsub => unsub());
     }
 
-    with = (fn: (node: E) => void) => {
-        fn(this.node);
+    with = (fn: (node: E) => (() => void) | void) => {
+        const callback = fn(this.node);
+
+        if (callback) {
+            this.onRemove(callback);
+        }
 
         return this;
     }
