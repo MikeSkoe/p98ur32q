@@ -4,7 +4,7 @@ import {
 } from '../../nodes/index';
 import { Task } from "../types/task";
 import { removeTask } from "../state";
-import { className } from "../../nodes/nodeManipulations";
+import { className, event, classNameOn } from "../../nodes/nodeManipulations";
 import createState from '../../lib/ZenPushStream';
 
 const TaskView = (
@@ -26,22 +26,8 @@ const TaskView = (
             })
     )
         .with(className('.task.horizontal'))
-        .with(node => {
-            return $isSelected.observable.subscribe(val => {
-                if (val) {
-                    node.classList.add('selected')
-                } else {
-                    node.classList.remove('selected')
-                }
-            }).unsubscribe
-        })
-        .with(node => {
-            node.addEventListener('click', toggleSelect);
-
-            return () => {
-                node.removeEventListener('click', toggleSelect);
-            }
-        })
+        .with(classNameOn('selected', $isSelected.observable))
+        .with(event('click', toggleSelect))
 }
 
 export default TaskView;
