@@ -16,7 +16,7 @@
     "express": "^4.17.1",
     "less-watch-compiler": "^1.14.1",
     "typescript": "^3.6.3",
-    "zen-push": "^0.2.1"
+    "zen-observable": "^0.8.15"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",

@@ -1,6 +1,6 @@
 import { View } from '../lib/View';
-import { isObservalbe } from '../lib/Publisher';
-import * as Observable from 'zen-observable';
+import {default as Observable} from 'zen-observable';
+import { isObservable } from '../lib/CreateStream';
 
 class String extends View<Text> {
     node = document.createTextNode('');
@@ -8,14 +8,14 @@ class String extends View<Text> {
     constructor(str: Observable<unknown> | string | number) {
         super();
 
-        if (typeof str === 'string' || typeof str === 'number') {
-            this.node.textContent = `${str}`;
-        } else if (isObservalbe(str)) {
+        if (isObservable(str)) {
             this.pushUnsub(
                 str.subscribe(
                     str => this.node.textContent = `${str}`,
                 ).unsubscribe,
             )
+        } else {
+            this.node.textContent = `${str}`;
         }
     }
 }
