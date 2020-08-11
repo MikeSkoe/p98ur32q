@@ -1,5 +1,5 @@
 import { View } from '../lib/View';
-import Observable from 'zen-observable';
+import {default as Observable} from 'zen-observable';
 
 class Link extends View<HTMLAnchorElement> {
     node = document.createElement('a');

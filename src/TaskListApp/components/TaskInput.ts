@@ -13,7 +13,13 @@ const TaskInput = () => {
     };
 
     return Input($input)
-        .on('keydown', onEnter);
+        .with(node => {
+            node.addEventListener('keydown', onEnter);
+
+            return () => {
+                node.removeEventListener('keydown', onEnter);
+            }
+        });
 };
 
 export default TaskInput;

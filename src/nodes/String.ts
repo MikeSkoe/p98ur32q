@@ -1,6 +1,8 @@
 import { View } from '../lib/View';
 import {default as Observable} from 'zen-observable';
-import { isObservable } from '../lib/CreateStream';
+
+const isObservable = <T>(value: any): value is Observable<T> =>
+    Object.keys(value).includes('_subscriber');
 
 class String extends View<Text> {
     node = document.createTextNode('');

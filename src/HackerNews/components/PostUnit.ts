@@ -4,11 +4,10 @@ import {
 } from '../../nodes/index';
 import { Post } from '../types/post';
 import Img from '../../nodes/Img';
-import * as Observable from 'zen-observable';
+import {default as Observable} from 'zen-observable';
 import { className } from '../../nodes/nodeManipulations';
 import Link from '../../nodes/Link';
-import PushStream from 'zen-push';
-import { newState } from '../../lib/Publisher';
+import createState, { ZenPushStream } from '../../lib/ZenPushStream';
 
 const getY = (node: HTMLElement) => {
     const rect = node.getBoundingClientRect()
@@ -17,12 +16,12 @@ const getY = (node: HTMLElement) => {
 };
 
 const scroll = (
-    $y: PushStream<number>,
+    $y: ZenPushStream<number>,
 ) => (
     node: HTMLElement,
 ) => {
 
-    const updateY = () => $y.next(getY(node));
+    const updateY = () => $y.next(() => getY(node));
     const sub = $y.observable.subscribe(val => {
         const updatedY = (val / 100) + 0.5
         node.style.opacity = `${updatedY}`;
@@ -36,9 +35,8 @@ const scroll = (
     }
 };
 
-
 const PostUnit = (post: Observable<Post>, postId: number | string) => {
-    const $y = newState<number>();
+    const $y = createState(0);
 
     return Div(
         Link(
@@ -48,12 +46,14 @@ const PostUnit = (post: Observable<Post>, postId: number | string) => {
             Div(String(post.map(val => val.title)))
                 .with(className('title')),
         ),
-        Div(String(post.map(val => `type: ${val.type}`))),
         Link(
             post.map(val => val.url),
             Div(String(post.map(val => `link: ${val.url}`))),
         ),
         Div(String(post.map(val => `score: ${val.score}`))),
+        Div(String(
+            post.map(val => `type: ${val.type}`)
+        )),
     )
         .with(className('post'))
         .with(scroll($y));

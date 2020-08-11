@@ -1,15 +1,19 @@
 import Div from '../nodes/Div';
 import { String, Button } from '../nodes/index';
 import { className } from '../nodes/nodeManipulations';
-import PushStream from '../lib/CreateStream';
+import createState from '../lib/ZenPushStream';
 
 const App = () => {
-    const $counter = new PushStream(7);
+    const $counter = createState(7);
 
     return Div(
-        String($counter.observable),
+        Div(String($counter.observable)),
+        Div(String($counter.observable
+            .filter(v => v % 2 === 0)
+            .map(v => v * 2)
+        )),
         Button('pressMe', () => {
-            $counter.next(val => val + 1);
+            $counter.next(v => v + 1);
         })
     ).with(className('test'));
 }

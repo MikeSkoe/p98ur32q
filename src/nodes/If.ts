@@ -1,6 +1,6 @@
 import { View } from '../lib/View';
 import PlaceHolder from './PlaceHolder';
-import * as Observable from 'zen-observable';
+import {default as Observable} from 'zen-observable';
 
 class If extends View<HTMLElement> {
     node = document.createElement('div');

@@ -1,6 +1,6 @@
 import { WithId, isIn, notIn } from '../lib/utils';
 import { View } from '../lib/View';
-import * as Observable from 'zen-observable';
+import {default as Observable} from 'zen-observable';
 
 const setKey = (
     key: string,

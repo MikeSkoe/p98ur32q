@@ -5,27 +5,27 @@ import If from '../../nodes/If';
 import { View } from '../../lib/View';
 import PlaceHolder from '../../nodes/PlaceHolder';
 import * as API from '../api/index';
-import { newState } from '../../lib/Publisher';
-import * as Observable from 'zen-observable';
+import {default as Observable} from 'zen-observable';
 import { className } from '../../nodes/nodeManipulations';
 import PostUnit from './PostUnit';
+import createState from '../../lib/ZenPushStream';
 
 const PostItem = <T extends WithId>(
     postId: T,
     children?: (post: Observable<Post>,
 ) => View) => {
-    const $postData = newState<Post>();
-    const $showItem = newState<boolean>();
+    const $postData = createState<Post>();
+    const $showData = createState(false);
 
     (async () => {
         const postData = await API.item<Post>(postId.id);
 
-        $showItem.next(true);
-        $postData.next(postData);
+        $showData.next(() => true);
+        $postData.next(() => postData);
     })();
 
     return If(
-        $showItem.observable,
+        $showData.observable,
         () => Div(
             PostUnit($postData.observable, postId.id)
                 .with(className('post-card')),
@@ -33,7 +33,7 @@ const PostItem = <T extends WithId>(
                 ? children($postData.observable)
                 : PlaceHolder(),
         ).with(className('post-item'))
-    );
+    )
 };
 
 export default PostItem;
