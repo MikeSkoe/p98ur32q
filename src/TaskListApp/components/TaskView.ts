@@ -3,30 +3,33 @@ import {
     String,
 } from '../../nodes/index';
 import { Task } from "../types/task";
-import { removeTask } from "../state";
+import { removeTask, $tasks } from "../state";
 import { className, event, classNameOn } from "../../nodes/nodeManipulations";
-import createState from '../../lib/ZenPushStream';
 
 const TaskView = (
     task: Task,
 ) => {
-    const $isSelected = createState(false);
-    const toggleSelect = () => $isSelected.next(isSelected => !isSelected);
+    const toggleSelect = () => $tasks.next(
+        tasks => tasks.map(tsk =>
+            tsk.id === task.id
+                ? {...tsk, completed: !tsk.completed}
+                : tsk,
+        )
+    );
+    const observableTask = 
+        $tasks.observable
+            .map(tasks => tasks.find(t => t.id === task.id))
 
     return Div(
-        String(task.title),
+        String(observableTask.map(t => t.title)),
         Div(String('X'))
-            .with(node => {
-                const callback = () => removeTask(task.id);
-                node.addEventListener('click', callback)
-
-                return () => {
-                    node.removeEventListener('click', callback);
-                }
-            })
+            .with(event('click', () => removeTask(task.id)))
     )
         .with(className('.task.horizontal'))
-        .with(classNameOn('selected', $isSelected.observable))
+        .with(classNameOn('selected',
+            observableTask
+                .map(task => task?.completed ?? false)
+        ))
         .with(event('click', toggleSelect))
 }
 

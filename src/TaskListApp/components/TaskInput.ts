@@ -5,10 +5,12 @@ import { event } from '../../nodes/nodeManipulations';
 const TaskInput = () => {
     const onEnter: HTMLInputElement['onkeydown'] = e => {
         if (e.key === 'Enter') {
-            addTask({
+            const task = {
                 id: `${Math.random()}`,
                 title: (<HTMLInputElement>e.target).value,
-            })
+                completed: false,
+            };
+            addTask(task)
             setInput('');
         }
     };

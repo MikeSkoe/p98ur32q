@@ -4,7 +4,7 @@ import createState from "../lib/ZenPushStream";
 // state
 export const $input = createState('');
 export const $tasks = createState<Task[]>([
-    {id: '1', title: 'hello'}
+    {id: '1', title: 'hello', completed: false}
 ]);
 
 // actions

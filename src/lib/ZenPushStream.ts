@@ -1,13 +1,5 @@
 import {default as Observable} from 'zen-observable';
 
-function addMethods(target, methods) {
-    Object.keys(methods).forEach(function(k) {
-      var desc = Object.getOwnPropertyDescriptor(methods, k);
-      desc.enumerable = false;
-      Object.defineProperty(target, k, desc);
-    });
-  }
-
 type Message = 'next' | 'error' | 'complete';
   
 export class ZenPushStream<T> {
@@ -20,7 +12,7 @@ export class ZenPushStream<T> {
         this.lastValue = initialValue;
         this.observable = new Observable(observer => {
             this.addObserver(observer);
-            if (initialValue) {
+            if (initialValue !== undefined) {
                 observer.next(this.lastValue);
             }
 

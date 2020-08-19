@@ -9,7 +9,7 @@ const App = () => {
     return Div(
         Div(String($counter.observable)),
         Div(String($counter.observable
-            .filter(v => v % 2 === 0)
+            .filter(v => v % 2 !== 0)
             .map(v => v * 2)
         )),
         Button('pressMe', () => {

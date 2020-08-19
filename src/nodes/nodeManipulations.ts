@@ -20,15 +20,21 @@ export const event = <K extends keyof HTMLElementEventMap>(
 
 export const classNameOn = (
     className: string,
-    $bool: Observable<boolean>,
+    $bool: Observable<boolean> | boolean,
 ) => (
     node: HTMLElement,
  ) => {
-    return $bool.subscribe(val => {
-        if (val) {
-            node.classList.add(className)
-        } else {
-            node.classList.remove(className)
+    if (typeof $bool === 'boolean') {
+        if ($bool) {
+            node.classList.add(className);
         }
-    }).unsubscribe
+    } else {
+        return $bool.subscribe(val => {
+            if (val) {
+                node.classList.add(className)
+            } else {
+                node.classList.remove(className)
+            }
+        }).unsubscribe
+    }
 }
